@@ -64,7 +64,7 @@ export interface Notification {
   providedIn: 'root'
 })
 export class OfficerService {
-  private baseUrl = 'https://localhost:7154/api'; // Updated to match your backend
+  private baseUrl = '/api'; // Use relative URL for proxy
 
   constructor(private http: HttpClient) {}
 

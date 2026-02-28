@@ -5,10 +5,10 @@ import { Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // Matches your [Route("api/[controller]")] -> api/Users
+  // Use relative URL for proxy - will be proxied to https://localhost:7154/api/Users
 
   private platformId = inject(PLATFORM_ID);
-  private apiUrl = 'https://localhost:7154/api/Users'; 
+  private apiUrl = '/api/Users'; 
 
   constructor(private http: HttpClient) {}
 
