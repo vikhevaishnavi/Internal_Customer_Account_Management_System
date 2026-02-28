@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <h2>Create Customer Account</h2>
+  <form (ngSubmit)="onSubmit()" #accountForm="ngForm">
+    <div class="mb-3">
+      <label>Customer Name</label>
+      <input type="text" class="form-control" [(ngModel)]="account.customerName" name="customerName" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Customer ID (Document Number)</label>
+      <input type="text" class="form-control" [(ngModel)]="account.customerID" name="customerID" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Account Type</label>
+      <select class="form-control" [(ngModel)]="account.accountType" name="accountType">
+        <option value="Savings">Savings</option>
+        <option value="Current">Current</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>Initial Balance</label>
+      <input type="number" class="form-control" [(ngModel)]="account.balance" name="balance">
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!accountForm.form.valid">Submit Account</button>
+  </form>
+</div>

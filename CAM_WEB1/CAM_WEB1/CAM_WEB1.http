@@ -1,0 +1,6 @@
+@CAM_WEB1_HostAddress = http://localhost:5104
+
+GET {{CAM_WEB1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

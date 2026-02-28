@@ -1,0 +1,45 @@
+<div class="container mt-4">
+  <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Admin: Register New Employee</h5>
+    </div>
+    <div class="card-body">
+      <form #userForm="ngForm" (ngSubmit)="onRegister()">
+        
+        <div class="mb-3">
+          <label class="form-label font-weight-bold">Full Name</label>
+          <input type="text" [(ngModel)]="user.name" name="name" class="form-control" placeholder="Enter Full Name" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label font-weight-bold">Email Address</label>
+          <input type="email" [(ngModel)]="user.email" name="email" class="form-control" placeholder="Enter Email" required>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label font-weight-bold">Initial Password</label>
+            <input type="password" [(ngModel)]="user.password" name="password" class="form-control" placeholder="Enter Password" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label font-weight-bold">Assigned Branch</label>
+            <input type="text" [(ngModel)]="user.branch" name="branch" class="form-control" placeholder="Enter Branch Name" required>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label font-weight-bold">System Role</label>
+          <select [(ngModel)]="user.role" name="role" class="form-select" required>
+            <option value="Officer">Bank Officer</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+
+        <button type="submit" [disabled]="!userForm.form.valid" class="btn btn-primary w-100">
+          Add User to Database
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

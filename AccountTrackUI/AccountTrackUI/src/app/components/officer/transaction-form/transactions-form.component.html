@@ -1,0 +1,24 @@
+<div class="card shadow-sm mx-auto" style="max-width: 500px;">
+  <div class="card-header bg-primary text-white">Process New Transaction</div>
+  <div class="card-body">
+    <form (ngSubmit)="submitTransaction()">
+      <div class="mb-3">
+        <label>Account ID</label>
+        <input type="number" [(ngModel)]="trans.accountID" name="accId" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label>Transaction Type</label>
+        <select [(ngModel)]="trans.type" name="type" class="form-select">
+          <option value="Deposit">Deposit</option>
+          <option value="Withdrawal">Withdrawal</option>
+          <option value="Transfer">Transfer</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label>Amount (INR)</label>
+        <input type="number" [(ngModel)]="trans.amount" name="amount" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-success w-100">Submit Transaction</button>
+    </form>
+  </div>
+</div>

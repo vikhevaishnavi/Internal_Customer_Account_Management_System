@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4" *ngIf="isLoggedIn">
+  <div class="container">
+    <a class="navbar-brand">AccountTrack</a>
+    <div class="navbar-nav">
+      <a class="nav-link" routerLink="/admin/users" *ngIf="userRole === 'Admin'">Manage Users</a>
+      
+      <a class="nav-link" routerLink="/officer/create-account" *ngIf="userRole === 'Officer'">New Account</a>
+      <a class="nav-link" routerLink="/officer/account-list" *ngIf="userRole === 'Officer'">View Accounts</a>
+      <a class="nav-link" routerLink="/officer/transactions" *ngIf="userRole === 'Officer'">Transactions</a>
+      
+      <a class="nav-link text-warning" (click)="logout()">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
