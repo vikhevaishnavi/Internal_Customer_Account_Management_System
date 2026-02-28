@@ -46,4 +46,23 @@ export class AuthService {
   logout() {
     localStorage.clear();
   }
+
+  getCurrentUser(): any {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return {
+            name: payload.name || payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || 'User',
+            email: payload.email || payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] || '',
+            role: this.getRole()
+          };
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
 }

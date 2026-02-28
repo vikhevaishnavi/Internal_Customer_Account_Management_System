@@ -1,0 +1,63 @@
+<div class="accounts-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Customer Accounts</h1>
+      <p class="page-subtitle">Manage all customer accounts</p>
+    </div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-container">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input 
+        type="text" 
+        placeholder="Search by account number or customer name..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="search-input"
+      >
+    </div>
+  </div>
+
+  <div class="accounts-table-container">
+    <table class="accounts-table">
+      <thead>
+        <tr>
+          <th>ACCOUNT NUMBER</th>
+          <th>CUSTOMER NAME</th>
+          <th>TYPE</th>
+          <th>BALANCE</th>
+          <th>STATUS</th>
+          <th>APPROVAL</th>
+          <th>CREATED DATE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let account of filteredAccounts">
+          <td class="account-number-cell">{{ account.accountNumber }}</td>
+          <td class="customer-name-cell">{{ account.customerName }}</td>
+          <td class="type-cell">{{ account.type }}</td>
+          <td class="balance-cell">{{ formatBalance(account.balance) }}</td>
+          <td class="status-cell">
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(account.status)">
+              {{ account.status }}
+            </span>
+          </td>
+          <td class="approval-cell">
+            <span class="approval-badge" [ngClass]="getApprovalBadgeClass(account.approval)">
+              {{ account.approval }}
+            </span>
+          </td>
+          <td class="created-date-cell">{{ account.createdDate }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredAccounts.length === 0" class="no-results">
+      <p>No accounts found matching your search.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="user-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>User Management</h1>
+      <p class="page-subtitle">Manage bank officers and managers</p>
+    </div>
+    <button class="btn-add-user" (click)="addUser()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Add User
+    </button>
+  </div>
+
+  <div class="search-section">
+    <div class="search-container">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input 
+        type="text" 
+        placeholder="Search by name, email, or username..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="search-input"
+      >
+    </div>
+  </div>
+
+  <div class="users-table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>USERNAME</th>
+          <th>NAME</th>
+          <th>EMAIL</th>
+          <th>ROLE</th>
+          <th>BRANCH</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td class="username-cell">{{ user.username }}</td>
+          <td class="name-cell">{{ user.name }}</td>
+          <td class="email-cell">{{ user.email }}</td>
+          <td class="role-cell">
+            <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+              {{ user.role }}
+            </span>
+          </td>
+          <td class="branch-cell">{{ user.branch }}</td>
+          <td class="actions-cell">
+            <button class="btn-action btn-delete" (click)="deleteUser(user)" title="Delete">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredUsers.length === 0" class="no-results">
+      <p>No users found matching your search.</p>
+    </div>
+  </div>
+</div>

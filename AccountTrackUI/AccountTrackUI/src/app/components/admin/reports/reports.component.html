@@ -1,0 +1,90 @@
+<div class="reports">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Reports Dashboard</h1>
+      <p class="page-subtitle">Analytics and insights</p>
+    </div>
+    <button class="btn-export" (click)="exportReport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Export Report
+    </button>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card" [ngClass]="metric.color" *ngFor="let metric of metrics; let i = index">
+      <div class="metric-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <ng-container [ngSwitch]="getMetricIcon(metric.icon)">
+            <ng-container *ngSwitchCase="'account'">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+            </ng-container>
+            <ng-container *ngSwitchCase="'balance'">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+            </ng-container>
+            <ng-container *ngSwitchCase="'transactions'">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </ng-container>
+            <ng-container *ngSwitchCase="'value'">
+              <line x1="12" y1="2" x2="12" y2="22"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            </ng-container>
+          </ng-container>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <h3 class="metric-title">{{ metric.title }}</h3>
+        <div class="metric-value">{{ metric.value }}</div>
+        <div class="metric-change">{{ metric.change }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-section">
+    <div class="chart-container">
+      <h3 class="chart-title">Account Type Distribution</h3>
+      <div class="pie-chart">
+        <div class="pie-chart-visual">
+          <div class="pie-slice" *ngFor="let label of accountTypeData.labels; let i = index"
+               [style.background]="getAccountTypeColor(i)"
+               [style.transform]="'rotate(' + (i * 120) + 'deg)'">
+          </div>
+        </div>
+        <div class="pie-legend">
+          <div class="legend-item" *ngFor="let label of accountTypeData.labels; let i = index">
+            <div class="legend-color" [style.background]="getAccountTypeColor(i)"></div>
+            <span class="legend-label">{{ label }} {{ getAccountTypePercentage(i) }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <h3 class="chart-title">Transaction Amount by Type</h3>
+      <div class="bar-chart">
+        <div class="chart-y-axis">
+          <div class="y-label">$160,000</div>
+          <div class="y-label">$140,000</div>
+          <div class="y-label">$120,000</div>
+        </div>
+        <div class="chart-bars">
+          <div class="bar-group" *ngFor="let label of transactionTypeData.labels; let i = index">
+            <div class="bar" 
+                 [style.background]="getTransactionTypeColor(i)"
+                 [style.height]="getBarHeight(transactionTypeData.data[i]) + '%'">
+            </div>
+            <div class="bar-label">{{ label }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

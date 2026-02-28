@@ -1,0 +1,195 @@
+.transactions-management {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.header-content h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.search-section {
+  margin-bottom: 2rem;
+}
+
+.search-container {
+  position: relative;
+  max-width: 500px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.transactions-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transactions-table th {
+  background: #f8f9fa;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.transactions-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: middle;
+}
+
+.transactions-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.type-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.type-deposit {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+}
+
+.type-withdrawal {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.type-transfer {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.account-number-cell {
+  font-weight: 600;
+  color: #2c3e50;
+  font-family: 'Courier New', monospace;
+}
+
+.amount-cell {
+  color: #2c3e50;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.date-cell {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.description-cell {
+  color: #495057;
+  max-width: 300px;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-completed {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+}
+
+.status-pending {
+  background: rgba(243, 156, 18, 0.1);
+  color: #f39c12;
+}
+
+.status-failed {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.approval-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.approval-approved {
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+}
+
+.approval-pending {
+  background: rgba(243, 156, 18, 0.1);
+  color: #f39c12;
+}
+
+.approval-rejected {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .transactions-table-container {
+    overflow-x: auto;
+  }
+  
+  .transactions-table {
+    min-width: 900px;
+  }
+}

@@ -1,0 +1,67 @@
+<div class="transactions-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Transactions</h1>
+      <p class="page-subtitle">Manage and process customer transactions</p>
+    </div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-container">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input 
+        type="text" 
+        placeholder="Search by account number or description..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="search-input"
+      >
+    </div>
+  </div>
+
+  <div class="transactions-table-container">
+    <table class="transactions-table">
+      <thead>
+        <tr>
+          <th>TYPE</th>
+          <th>ACCOUNT NUMBER</th>
+          <th>AMOUNT</th>
+          <th>DATE</th>
+          <th>DESCRIPTION</th>
+          <th>STATUS</th>
+          <th>APPROVAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of filteredTransactions">
+          <td class="type-cell">
+            <span class="type-badge" [ngClass]="getTypeClass(transaction.type)">
+              {{ transaction.type }}
+            </span>
+          </td>
+          <td class="account-number-cell">{{ transaction.accountNumber }}</td>
+          <td class="amount-cell">{{ formatAmount(transaction.amount) }}</td>
+          <td class="date-cell">{{ transaction.date }}</td>
+          <td class="description-cell">{{ transaction.description }}</td>
+          <td class="status-cell">
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(transaction.status)">
+              {{ transaction.status }}
+            </span>
+          </td>
+          <td class="approval-cell">
+            <span class="approval-badge" [ngClass]="getApprovalBadgeClass(transaction.approval)">
+              {{ transaction.approval }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredTransactions.length === 0" class="no-results">
+      <p>No transactions found matching your search.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,186 @@
+<div class="manager-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <div class="logo-section">
+        <div class="bank-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <div class="bank-info">
+          <h1>Bank Portal</h1>
+          <p>Customer Account Management</p>
+        </div>
+      </div>
+      <nav class="dashboard-nav">
+        <a routerLink="/manager/dashboard" routerLinkActive="active" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Dashboard
+        </a>
+        <a routerLink="/manager/accounts" routerLinkActive="active" class="nav-item active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 010 7.75"></path>
+          </svg>
+          Accounts
+        </a>
+        <a routerLink="/manager/transactions" routerLinkActive="active" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+          </svg>
+          Transactions
+        </a>
+        <a routerLink="/manager/approvals" routerLinkActive="active" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          Approvals
+        </a>
+        <a routerLink="/manager/reports" routerLinkActive="active" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          Reports
+        </a>
+      </nav>
+    </div>
+    <div class="header-right">
+      <div class="user-info">
+        <span class="user-name">Jane Manager</span>
+        <span class="user-role">Manager</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Customer Accounts Section -->
+    <section class="accounts-section">
+      <div class="section-header">
+        <div class="header-content">
+          <h1>Customer Accounts</h1>
+          <p class="section-subtitle">Manage and create customer accounts</p>
+        </div>
+      </div>
+      
+      <!-- Search Bar -->
+      <div class="search-section">
+        <div class="search-controls">
+          <div class="search-container">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <input 
+              type="text" 
+              placeholder="Search by customer name or account number..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              class="search-input"
+            >
+          </div>
+          <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 013.51 15"></path>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Accounts Table -->
+      <div class="accounts-table-container">
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="loading-spinner">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0"></path>
+              <path d="M9 12a9 9 0 11-18 0 9 9 0 0118 0"></path>
+            </svg>
+          </div>
+          <p>Loading accounts from database...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="errorMessage && !isLoading" class="error-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3>Connection Error</h3>
+          <p>{{ errorMessage }}</p>
+          <button class="retry-btn" (click)="refreshData()">Retry</button>
+        </div>
+
+        <!-- Data Table -->
+        <table *ngIf="!isLoading && !errorMessage" class="accounts-table">
+          <thead>
+            <tr>
+              <th>ACCOUNT NUMBER</th>
+              <th>CUSTOMER NAME</th>
+              <th>TYPE</th>
+              <th>BALANCE</th>
+              <th>STATUS</th>
+              <th>APPROVAL</th>
+              <th>CREATED DATE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let account of filteredAccounts">
+              <td class="account-number">{{ account.accountId }}</td>
+              <td class="customer-name">{{ account.customerName }}</td>
+              <td class="account-type">{{ account.accountType }}</td>
+              <td class="balance">{{ formatAmount(account.balance) }}</td>
+              <td class="status">
+                <span class="status-badge" [ngClass]="getStatusClass(account.status)">
+                  {{ account.status }}
+                </span>
+              </td>
+              <td class="approval">
+                <span class="approval-badge" [ngClass]="getApprovalClass(account.approval)">
+                  {{ account.approval }}
+                </span>
+              </td>
+              <td class="created-date">{{ account.createdDate }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- No Results State -->
+        <div *ngIf="!isLoading && !errorMessage && filteredAccounts.length === 0" class="no-results">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="M21 21l-4.35-4.35"></path>
+          </svg>
+          <h3>No accounts found</h3>
+          <p>No accounts found matching your search criteria.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

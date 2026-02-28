@@ -1,0 +1,106 @@
+<div class="approvals-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Pending Approvals</h1>
+      <p class="page-subtitle">Review and approve pending requests</p>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'all'"
+      (click)="onFilterChange('all')"
+    >
+      All ({{ filterCounts.all }})
+    </button>
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'accounts'"
+      (click)="onFilterChange('accounts')"
+    >
+      Accounts ({{ filterCounts.accounts }})
+    </button>
+    <button 
+      class="filter-tab" 
+      [class.active]="selectedFilter === 'transactions'"
+      (click)="onFilterChange('transactions')"
+    >
+      Transactions ({{ filterCounts.transactions }})
+    </button>
+  </div>
+
+  <div class="approvals-list">
+    <div *ngIf="filteredApprovals.length === 0" class="no-approvals">
+      <p>No pending approvals found.</p>
+    </div>
+
+    <div *ngFor="let approval of filteredApprovals" class="approval-card">
+      <div class="approval-header">
+        <div class="approval-type">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ng-container [ngSwitch]="getTypeIcon(approval.type)">
+              <ng-container *ngSwitchCase="'account'">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </ng-container>
+              <ng-container *ngSwitchCase="'transaction'">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+              </ng-container>
+            </ng-container>
+          </svg>
+          <span class="type-label">{{ approval.type }}</span>
+        </div>
+        <div class="approval-meta">
+          <span class="requested-on">Requested on {{ approval.requestedOn }} by {{ approval.requestedBy }}</span>
+        </div>
+      </div>
+
+      <div class="approval-content">
+        <h3 class="approval-description">{{ approval.description }}</h3>
+        
+        <div class="approval-details">
+          <ng-container [ngSwitch]="approval.type">
+            <ng-container *ngSwitchCase="'Account'">
+              <div class="detail-item">
+                <span class="detail-label">Account Number:</span>
+                <span class="detail-value">{{ approval.details.accountNumber }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Customer Name:</span>
+                <span class="detail-value">{{ approval.details.customerName }}</span>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="'Transaction'">
+              <div class="detail-item">
+                <span class="detail-label">Transaction ID:</span>
+                <span class="detail-value">{{ approval.details.transactionId }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value">{{ formatAmount(approval.details.amount || 0) }}</span>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="approval-actions">
+        <button class="btn-approve" (click)="approveRequest(approval)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Approve
+        </button>
+        <button class="btn-reject" (click)="rejectRequest(approval)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Reject
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
