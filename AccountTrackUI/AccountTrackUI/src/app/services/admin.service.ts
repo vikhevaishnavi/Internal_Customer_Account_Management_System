@@ -7,7 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
   providedIn: 'root'
 })
 export class AdminService {
-  private baseUrl = '/api'; // Use relative URL for proxy
+  private baseUrl = 'http://localhost:5000/api'; // Use full URL since proxy is disabled
 
   constructor(
     private http: HttpClient,

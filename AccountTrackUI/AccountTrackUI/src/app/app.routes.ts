@@ -3,7 +3,8 @@ import { roleGuard } from './core/guards/role.guard';
 import { LoginComponent } from './components/auth/login/login';
 import { CreateAccountComponent } from './components/officer/create-account/create-account';
 import { AccountListComponent } from './components/officer/account-list/account-list';
-import { UserManagementComponent } from './components/admin/user-management/user-management';
+import { AccountManagementComponent } from './components/officer/account-management/account-management.component';
+import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 
 // Admin Dashboard Components
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
@@ -51,6 +52,12 @@ export const routes: Routes = [
   { 
     path: 'officer/dashboard', 
     component: OfficerDashboardComponent, 
+    canActivate: [roleGuard], 
+    data: { role: 'Officer' } 
+  },
+  { 
+    path: 'officer/account-management', 
+    component: AccountManagementComponent, 
     canActivate: [roleGuard], 
     data: { role: 'Officer' } 
   },

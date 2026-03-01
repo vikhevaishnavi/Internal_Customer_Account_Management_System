@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminService } from '../../../services/admin.service';
 
 interface User {
-  id: number;
-  username: string;
-  name: string;
-  email: string;
-  password?: string;
-  role: string;
-  branch: string;
+  UserID: number;
+  Name: string;
+  Email: string;
+  Role: string;
+  Branch: string;
+  Status: string;
+  CreatedDate: string;
 }
 
 @Component({
@@ -20,54 +21,59 @@ interface User {
   styleUrls: ['./user-management.component.css']
 })
 export class UserManagementComponent implements OnInit {
-  users: User[] = [
-    {
-      id: 1,
-      username: 'admin',
-      name: 'Admin User',
-      email: 'admin@bank.com',
-      role: 'admin',
-      branch: 'N/A'
-    },
-    {
-      id: 2,
-      username: 'officer',
-      name: 'John Officer',
-      email: 'officer@bank.com',
-      role: 'officer',
-      branch: 'Main Branch'
-    },
-    {
-      id: 3,
-      username: 'manager',
-      name: 'Jane Manager',
-      email: 'manager@bank.com',
-      role: 'manager',
-      branch: 'Main Branch'
-    }
-  ];
+  users: User[] = [];
+  filteredUsers: User[] = [];
+  isLoading = true;
+  errorMessage = '';
 
-  user: User = {
-    id: 0,
-    username: '',
-    name: '',
-    email: '',
-    password: '',
-    role: 'Officer',
-    branch: ''
+  user = {
+    Name: '',
+    Email: '',
+    Password: '',
+    Role: 'Officer',
+    Branch: ''
   };
 
   searchTerm: string = '';
-  filteredUsers: User[] = [...this.users];
 
-  ngOnInit(): void {}
+  constructor(private adminService: AdminService) {}
+
+  ngOnInit(): void {
+    console.log('=== USER MANAGEMENT INIT ===');
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    console.log('Loading users from API...');
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.adminService.getUsers().subscribe({
+      next: (data) => {
+        console.log('Users loaded successfully:', data);
+        this.users = data;
+        this.filteredUsers = [...this.users];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+        this.errorMessage = 'Failed to load users. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
 
   onSearchChange(): void {
-    this.filteredUsers = this.users.filter(user =>
-      user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      user.username.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    if (!this.searchTerm) {
+      this.filteredUsers = [...this.users];
+    } else {
+      this.filteredUsers = this.users.filter(user =>
+        user.Name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        user.Email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        user.Role.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        user.Branch.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
   }
 
   addUser(): void {
@@ -76,25 +82,28 @@ export class UserManagementComponent implements OnInit {
 
   onRegister(): void {
     console.log('Registering user:', this.user);
-    // Here you would typically call an API to register the user
-    // For now, just add to the local array
-    const newUser: User = {
-      ...this.user,
-      id: this.users.length + 1,
-      username: this.user.email.split('@')[0] // Generate username from email
-    };
-    this.users.push(newUser);
-    this.filteredUsers = [...this.users];
     
-    // Reset form
+    this.adminService.createUser(this.user).subscribe({
+      next: (response) => {
+        console.log('User created successfully:', response);
+        alert('User created successfully!');
+        this.loadUsers(); // Reload users list
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error('Error creating user:', error);
+        alert('Failed to create user. Please try again.');
+      }
+    });
+  }
+
+  resetForm(): void {
     this.user = {
-      id: 0,
-      username: '',
-      name: '',
-      email: '',
-      password: '',
-      role: 'Officer',
-      branch: ''
+      Name: '',
+      Email: '',
+      Password: '',
+      Role: 'Officer',
+      Branch: ''
     };
   }
 
@@ -103,9 +112,9 @@ export class UserManagementComponent implements OnInit {
   }
 
   deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete ${user.name}?`)) {
-      this.users = this.users.filter(u => u.id !== user.id);
-      this.filteredUsers = this.filteredUsers.filter(u => u.id !== user.id);
+    if (confirm(`Are you sure you want to delete ${user.Name}?`)) {
+      console.log('Delete user functionality - not implemented yet');
+      // TODO: Implement delete user API call
     }
   }
 
@@ -119,6 +128,17 @@ export class UserManagementComponent implements OnInit {
         return 'role-officer';
       default:
         return 'role-default';
+    }
+  }
+
+  getStatusBadgeClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'status-active';
+      case 'inactive':
+        return 'status-inactive';
+      default:
+        return 'status-default';
     }
   }
 }

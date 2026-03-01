@@ -1,29 +1,163 @@
-<div class="container mt-4">
-  <h2>Create Customer Account</h2>
-  <form (ngSubmit)="onSubmit()" #accountForm="ngForm">
-    <div class="mb-3">
-      <label>Customer Name</label>
-      <input type="text" class="form-control" [(ngModel)]="account.customerName" name="customerName" required>
+<div class="create-account-container">
+  <div class="form-card" *ngIf="!successMessage; else successScreen">
+    <div class="card-header">
+      <h2>Create Customer Account</h2>
+      <p class="card-subtitle">Fill in the details to open a new account</p>
     </div>
+    
+    <form (ngSubmit)="onSubmit()" #accountForm="ngForm" class="account-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customerName">Customer Name *</label>
+          <input 
+            type="text" 
+            id="customerName"
+            class="form-control" 
+            [(ngModel)]="account.customerName" 
+            name="customerName" 
+            required
+            placeholder="Enter customer full name"
+          >
+          <div class="field-hint">Enter the customer's full legal name</div>
+        </div>
+      </div>
 
-    <div class="mb-3">
-      <label>Customer ID (Document Number)</label>
-      <input type="text" class="form-control" [(ngModel)]="account.customerID" name="customerID" required>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customerID">Customer ID (Document Number) *</label>
+          <input 
+            type="text" 
+            id="customerID"
+            class="form-control" 
+            [(ngModel)]="account.customerID" 
+            name="customerID" 
+            required
+            placeholder="Enter ID document number"
+          >
+          <div class="field-hint">Aadhaar, PAN, or other government ID</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accountType">Account Type *</label>
+          <select 
+            id="accountType"
+            class="form-control" 
+            [(ngModel)]="account.accountType" 
+            name="accountType"
+            required
+          >
+            <option value="Savings">Savings Account</option>
+            <option value="Current">Current Account</option>
+          </select>
+          <div class="field-hint">Choose the type of account to open</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="branch">Branch *</label>
+          <select 
+            id="branch"
+            class="form-control" 
+            [(ngModel)]="account.branch" 
+            name="branch"
+            required
+          >
+            <option value="Chennai">Chennai</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Bangalore">Bangalore</option>
+            <option value="Kolkata">Kolkata</option>
+          </select>
+          <div class="field-hint">Select the branch where account will be opened</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="balance">Initial Balance (₹)</label>
+          <input 
+            type="number" 
+            id="balance"
+            class="form-control" 
+            [(ngModel)]="account.balance" 
+            name="balance"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+          >
+          <div class="field-hint">Initial deposit amount (optional)</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="!accountForm.form.valid || isLoading"
+        >
+          <span *ngIf="!isLoading">Create Account</span>
+          <span *ngIf="isLoading" class="loading-text">
+            <span class="spinner"></span>
+            Creating Account...
+          </span>
+        </button>
+        
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="resetForm()"
+          [disabled]="isLoading"
+        >
+          Clear Form
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Success Screen Template -->
+  <ng-template #successScreen>
+    <div class="success-card">
+      <div class="success-icon">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      
+      <div class="success-content">
+        <h2>Account Created Successfully!</h2>
+        <p class="success-message">The customer account has been opened successfully.</p>
+        
+        <div class="account-details">
+          <h3>Account Details</h3>
+          <div class="detail-item">
+            <span class="label">Customer Name:</span>
+            <span class="value">{{ account.customerName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Account Type:</span>
+            <span class="value">{{ account.accountType }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Initial Balance:</span>
+            <span class="value">₹{{ account.balance }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Branch:</span>
+            <span class="value">{{ account.branch }}</span>
+          </div>
+        </div>
+        
+        <div class="success-actions">
+          <button class="btn btn-primary" (click)="createAnotherAccount()">
+            Create Another Account
+          </button>
+          <button class="btn btn-secondary" (click)="goToDashboard()">
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div class="mb-3">
-      <label>Account Type</label>
-      <select class="form-control" [(ngModel)]="account.accountType" name="accountType">
-        <option value="Savings">Savings</option>
-        <option value="Current">Current</option>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label>Initial Balance</label>
-      <input type="number" class="form-control" [(ngModel)]="account.balance" name="balance">
-    </div>
-
-    <button type="submit" class="btn btn-primary" [disabled]="!accountForm.form.valid">Submit Account</button>
-  </form>
+  </ng-template>
 </div>

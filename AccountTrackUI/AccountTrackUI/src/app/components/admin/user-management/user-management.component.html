@@ -1,5 +1,6 @@
 <div class="container mt-4">
-  <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+  <!-- Registration Form -->
+  <div class="card shadow-sm mx-auto mb-4" style="max-width: 600px;">
     <div class="card-header bg-primary text-white">
       <h5 class="mb-0">Admin: Register New Employee</h5>
     </div>
@@ -8,28 +9,28 @@
         
         <div class="mb-3">
           <label class="form-label font-weight-bold">Full Name</label>
-          <input type="text" [(ngModel)]="user.name" name="name" class="form-control" placeholder="Enter Full Name" required>
+          <input type="text" [(ngModel)]="user.Name" name="Name" class="form-control" placeholder="Enter Full Name" required>
         </div>
 
         <div class="mb-3">
           <label class="form-label font-weight-bold">Email Address</label>
-          <input type="email" [(ngModel)]="user.email" name="email" class="form-control" placeholder="Enter Email" required>
+          <input type="email" [(ngModel)]="user.Email" name="Email" class="form-control" placeholder="Enter Email" required>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
             <label class="form-label font-weight-bold">Initial Password</label>
-            <input type="password" [(ngModel)]="user.password" name="password" class="form-control" placeholder="Enter Password" required>
+            <input type="password" [(ngModel)]="user.Password" name="Password" class="form-control" placeholder="Enter Password" required>
           </div>
           <div class="col-md-6">
             <label class="form-label font-weight-bold">Assigned Branch</label>
-            <input type="text" [(ngModel)]="user.branch" name="branch" class="form-control" placeholder="Enter Branch Name" required>
+            <input type="text" [(ngModel)]="user.Branch" name="Branch" class="form-control" placeholder="Enter Branch Name" required>
           </div>
         </div>
 
         <div class="mb-4">
           <label class="form-label font-weight-bold">System Role</label>
-          <select [(ngModel)]="user.role" name="role" class="form-select" required>
+          <select [(ngModel)]="user.Role" name="Role" class="form-select" required>
             <option value="Officer">Bank Officer</option>
             <option value="Manager">Manager</option>
             <option value="Admin">Admin</option>
@@ -40,6 +41,84 @@
           Add User to Database
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Users List -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">User Management</h5>
+      <div class="d-flex align-items-center">
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()" 
+               class="form-control form-control-sm me-2" placeholder="Search users..." style="width: 200px;">
+        <span class="badge bg-info">Total: {{ filteredUsers.length }}</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading users...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+        <strong>Error:</strong> {{ errorMessage }}
+        <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="loadUsers()">Retry</button>
+      </div>
+
+      <!-- Users Table -->
+      <div *ngIf="!isLoading && !errorMessage">
+        <div *ngIf="filteredUsers.length === 0" class="text-center py-4">
+          <p class="text-muted">No users found.</p>
+        </div>
+        
+        <div *ngIf="filteredUsers.length > 0" class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Branch</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredUsers">
+                <td>{{ user.UserID }}</td>
+                <td>{{ user.Name }}</td>
+                <td>{{ user.Email }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getRoleBadgeClass(user.Role)">
+                    {{ user.Role }}
+                  </span>
+                </td>
+                <td>{{ user.Branch }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(user.Status)">
+                    {{ user.Status }}
+                  </span>
+                </td>
+                <td>{{ user.CreatedDate | date:'short' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1" (click)="editUser(user)">
+                    Edit
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

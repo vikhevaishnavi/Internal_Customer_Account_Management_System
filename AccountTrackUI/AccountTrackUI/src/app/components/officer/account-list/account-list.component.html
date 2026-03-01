@@ -1,35 +1,68 @@
-<div class="container mt-4">
-  <h3>Manage Customer Accounts</h3>
-  <table class="table table-hover border shadow-sm">
-    <thead class="table-dark">
-      <tr>
-        <th>Account ID</th>
-        <th>Customer Name</th>
-        <th>Type</th>
-        <th>Balance</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let acc of accounts">
-        <td>{{ acc.accountID }}</td>
-        <td>{{ acc.customerName }}</td>
-        <td>{{ acc.accountType }}</td>
-        <td>{{ acc.balance | currency:'INR' }}</td>
-        <td>
-          <span class="badge" [ngClass]="acc.status === 'Active' ? 'bg-success' : 'bg-danger'">
-            {{ acc.status }}
-          </span>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-info me-2" (click)="viewDetails(acc.accountID)">Details</button>
-          
-          <button class="btn btn-sm btn-outline-danger" 
-                  (click)="onClose(acc.accountID)" 
-                  [disabled]="acc.status === 'Closed'">Close</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="account-list-container">
+  <div class="page-header">
+    <h2>Customer Accounts Management</h2>
+    <p class="page-subtitle">View and manage all customer accounts</p>
+  </div>
+
+  <!-- Simple Account Display -->
+  <div *ngIf="accounts.length > 0" class="accounts-table-container">
+    <div class="table-responsive">
+      <table class="accounts-table">
+        <thead>
+          <tr>
+            <th>Account ID</th>
+            <th>Customer Name</th>
+            <th>Account Type</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Branch</th>
+            <th>Created Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let acc of accounts" class="account-row">
+            <td class="account-id">
+              <strong>{{ acc.accountID || 'N/A' }}</strong>
+            </td>
+            <td class="customer-name">
+              <div class="customer-info">
+                <span class="name">{{ acc.customerName || 'N/A' }}</span>
+                <span class="customer-id" *ngIf="acc.customerID">ID: {{ acc.customerID }}</span>
+              </div>
+            </td>
+            <td class="account-type">
+              <span class="type-badge">{{ acc.accountType || 'N/A' }}</span>
+            </td>
+            <td class="balance">
+              <span class="amount">{{ acc.balance | currency:'INR' }}</span>
+            </td>
+            <td class="status">
+              <span class="status-badge">{{ acc.status || 'Unknown' }}</span>
+            </td>
+            <td class="branch">
+              {{ acc.branch || 'N/A' }}
+            </td>
+            <td class="date">
+              {{ acc.createdDate || 'N/A' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Summary Stats -->
+    <div class="summary-stats">
+      <div class="stat-item">
+        <span class="stat-label">Total Accounts:</span>
+        <span class="stat-value">{{ accounts.length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="accounts.length === 0" class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>No Accounts Found</h3>
+    <p>There are no customer accounts in the system yet.</p>
+  </div>
 </div>

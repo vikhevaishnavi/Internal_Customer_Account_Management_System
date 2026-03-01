@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7154/api' // Matches your .NET backend port
+  apiUrl: 'http://localhost:5000/api' // Matches your .NET backend port
 };

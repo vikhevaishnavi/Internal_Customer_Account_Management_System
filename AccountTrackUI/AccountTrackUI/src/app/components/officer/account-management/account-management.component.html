@@ -1,0 +1,263 @@
+<div class="account-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Account Management</h1>
+      <p class="page-subtitle">Create and manage customer accounts</p>
+    </div>
+    <button class="btn-add-account" (click)="toggleAddAccountForm()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Create Account
+    </button>
+  </div>
+
+  <!-- Create Account Form -->
+  <div class="add-account-form" *ngIf="showAddAccountForm">
+    <div class="form-container">
+      <div class="form-header">
+        <h3>Create New Account</h3>
+        <button class="close-btn" (click)="toggleAddAccountForm()">×</button>
+      </div>
+      
+      <!-- Success Message -->
+      <div class="success-message" *ngIf="successMessage">
+        <div class="success-icon">✓</div>
+        <p>{{ successMessage }}</p>
+      </div>
+
+      <form (ngSubmit)="createAccount()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerName">Customer Name *</label>
+            <input 
+              type="text" 
+              id="customerName" 
+              [(ngModel)]="newAccount.customerName" 
+              name="customerName" 
+              required
+              placeholder="Enter customer full name"
+              autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="customerID">Customer ID *</label>
+            <input 
+              type="text" 
+              id="customerID" 
+              [(ngModel)]="newAccount.customerID" 
+              name="customerID" 
+              required
+              placeholder="Enter customer ID"
+              autocomplete="off">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="accountType">Account Type *</label>
+            <select 
+              id="accountType" 
+              [(ngModel)]="newAccount.accountType" 
+              name="accountType" 
+              required>
+              <option value="Savings">Savings Account</option>
+              <option value="Current">Current Account</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="balance">Initial Balance *</label>
+            <input 
+              type="number" 
+              id="balance" 
+              [(ngModel)]="newAccount.balance" 
+              name="balance" 
+              required
+              min="0"
+              step="0.01"
+              placeholder="0.00">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="branch">Branch *</label>
+            <select 
+              id="branch" 
+              [(ngModel)]="newAccount.branch" 
+              name="branch" 
+              required>
+              <option value="Chennai">Chennai</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Bangalore">Bangalore</option>
+              <option value="Kolkata">Kolkata</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="status">Account Status</label>
+            <select 
+              id="status" 
+              [(ngModel)]="newAccount.status" 
+              name="status">
+              <option value="Active">Active</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="toggleAddAccountForm()" [disabled]="isCreating">Cancel</button>
+          <button type="submit" class="btn-submit" [disabled]="isCreating || !newAccount.customerName || !newAccount.customerID || !newAccount.accountType || newAccount.balance < 0 || !newAccount.branch">
+            <span *ngIf="!isCreating">Create Account</span>
+            <span *ngIf="isCreating">
+              <span class="btn-spinner"></span>
+              Creating...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading && !showAddAccountForm" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading accounts...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading && !showAddAccountForm" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <h3>Error Loading Accounts</h3>
+    <p>{{ errorMessage }}</p>
+    <button class="btn-primary" (click)="refreshAccounts()">Try Again</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && accounts.length === 0 && !showAddAccountForm" class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>No Accounts Found</h3>
+    <p>There are no customer accounts in the system yet.</p>
+    <button class="btn-primary" (click)="toggleAddAccountForm()">Create First Account</button>
+  </div>
+
+  <!-- Accounts Table -->
+  <div *ngIf="!isLoading && accounts.length > 0 && !showAddAccountForm" class="accounts-table-container">
+    <!-- Sample Data Notice -->
+    <div *ngIf="errorMessage && errorMessage.includes('sample data')" class="sample-data-notice">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-content">
+        <h4>Sample Data Mode</h4>
+        <p>{{ errorMessage }}</p>
+      </div>
+    </div>
+    
+    <div class="table-header">
+      <h3>Customer Accounts</h3>
+      <div class="table-actions">
+        <button class="btn-refresh" (click)="refreshAccounts()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">🔄 Refresh</span>
+          <span *ngIf="isLoading">⟳ Loading...</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="accounts-table">
+        <thead>
+          <tr>
+            <th>Account ID</th>
+            <th>Customer Name</th>
+            <th>Account Type</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Branch</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let acc of accounts" class="account-row">
+            <td class="account-id">
+              <strong>{{ acc.accountID || 'N/A' }}</strong>
+            </td>
+            <td class="customer-name">
+              <div class="customer-info">
+                <span class="name">{{ acc.customerName || 'N/A' }}</span>
+                <span class="customer-id" *ngIf="acc.customerID">ID: {{ acc.customerID }}</span>
+              </div>
+            </td>
+            <td class="account-type">
+              <span class="type-badge" [ngClass]="getAccountTypeClass(acc.accountType)">
+                {{ acc.accountType || 'N/A' }}
+              </span>
+            </td>
+            <td class="balance">
+              <span class="amount" [ngClass]="acc.balance >= 0 ? 'positive' : 'negative'">
+                {{ formatAmount(acc.balance) }}
+              </span>
+            </td>
+            <td class="status">
+              <span class="status-badge" [ngClass]="getStatusClass(acc.status)">
+                {{ acc.status || 'Unknown' }}
+              </span>
+            </td>
+            <td class="branch">
+              {{ acc.branch || 'N/A' }}
+            </td>
+            <td class="date">
+              {{ formatDate(acc.createdDate) || 'N/A' }}
+            </td>
+            <td class="actions">
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-info" 
+                        (click)="onViewDetails(acc.accountID!)" 
+                        title="View Details"
+                        [disabled]="!acc.accountID">
+                  👁️ View
+                </button>
+                
+                <button class="btn btn-sm btn-warning" 
+                        (click)="onEditAccount(acc.accountID!)" 
+                        title="Edit Account"
+                        [disabled]="acc.status === 'Closed' || !acc.accountID">
+                  ✏️ Edit
+                </button>
+                
+                <button class="btn btn-sm btn-danger" 
+                        (click)="onClose(acc.accountID!)" 
+                        title="Close Account"
+                        [disabled]="acc.status === 'Closed' || !acc.accountID">
+                  🔒 Close
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Summary Stats -->
+    <div class="summary-stats">
+      <div class="stat-item">
+        <span class="stat-label">Total Accounts:</span>
+        <span class="stat-value">{{ accounts.length }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Active:</span>
+        <span class="stat-value active">{{ activeAccountsCount }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Closed:</span>
+        <span class="stat-value closed">{{ closedAccountsCount }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Total Balance:</span>
+        <span class="stat-value">{{ formatAmount(totalBalance) }}</span>
+      </div>
+    </div>
+  </div>
+</div>

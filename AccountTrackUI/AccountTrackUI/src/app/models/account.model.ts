@@ -6,4 +6,5 @@ export interface Account {
   balance: number;
   branch: string;
   status: string;
+  createdDate?: string;
 }

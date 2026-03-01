@@ -1,26 +1,40 @@
-// import { Component, OnInit } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { AccountService } from '../../../services/account.service';
-// import { Account } from '../../../models/account.model';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { AccountService } from '../../../services/account.service';
+import { Account } from '../../../models/account.model';
 
-// @Component({
-//   selector: 'app-account-list',
-//   standalone: true,
-//   imports: [CommonModule],
-//   templateUrl: './account-list.component.html'
-// })
-// export class AccountListComponent implements OnInit {
-//   accounts: Account[] = [];
+@Component({
+  selector: 'app-account-list',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './account-list.component.html',
+  styleUrls: ['./account-list.component.css']
+})
+export class AccountListComponent implements OnInit {
+  accounts: Account[] = [];
 
-//   constructor(private accountService: AccountService) {}
+  constructor(
+    private accountService: AccountService,
+    private router: Router
+  ) {}
 
-//   ngOnInit() {
-//     this.accountService.getAllAccounts().subscribe(data => this.accounts = data);
-//   }
+  ngOnInit() {
+    console.log('=== ACCOUNT LIST INIT ===');
+    this.loadAccounts();
+  }
 
-//   onClose(id: number) {
-//     if(confirm('Are you sure you want to close this account?')) {
-//       this.accountService.closeAccount(id).subscribe(() => this.ngOnInit());
-//     }
-//   }
-// }
+  loadAccounts() {
+    console.log('=== LOADING ACCOUNTS ===');
+    this.accountService.getAllAccounts().subscribe({
+      next: (data: Account[]) => {
+        console.log('=== ACCOUNTS LOADED SUCCESSFULLY ===');
+        this.accounts = data;
+      },
+      error: (error) => {
+        console.log('=== ERROR LOADING ACCOUNTS ===');
+        console.error('Error:', error);
+      }
+    });
+  }
+}
