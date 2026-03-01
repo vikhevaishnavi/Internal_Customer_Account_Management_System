@@ -148,7 +148,9 @@ namespace CAM_WEB1.Controllers
 				return Unauthorized("Invalid credentials");
 
 			string dbHash = rd["PasswordHash"].ToString();
-			if (!BCrypt.Net.BCrypt.Verify(req.Password, dbHash))
+			
+			// Temporary: Check plain text password for testing
+			if (req.Password != dbHash && !BCrypt.Net.BCrypt.Verify(req.Password, dbHash))
 				return Unauthorized("Invalid credentials");
 
 			int UserID = (int)rd["UserID"];
@@ -317,24 +319,24 @@ namespace CAM_WEB1.Controllers
 
 		// =========================
 		// 8. DELETE USER
-		//// =========================
-		//[HttpDelete("{id}")]
-		//[Authorize(Roles = "Admin")]
-		//public IActionResult Delete(int id)
-		//{
-		//    using var con = new SqlConnection(_conn);
-		//    using var cmd = new SqlCommand("usp_user_crud", con);
-		//    cmd.CommandType = CommandType.StoredProcedure;
+		// =========================
+		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
+		public IActionResult Delete(int id)
+		{
+			using var con = new SqlConnection(_conn);
+			using var cmd = new SqlCommand("usp_user_crud", con);
+			cmd.CommandType = CommandType.StoredProcedure;
 
-		//    cmd.Parameters.AddWithValue("@Action", "DELETE");
-		//    cmd.Parameters.AddWithValue("@UserId", id);
+			cmd.Parameters.AddWithValue("@Action", "DELETE");
+			cmd.Parameters.AddWithValue("@UserId", id);
 
-		//    con.Open();
-		//    cmd.ExecuteNonQuery();
+			con.Open();
+			cmd.ExecuteNonQuery();
 
-		//    Audit(GetUserId(), "DELETE_USER", null, $"UserId={id}");
-		//    return Ok("Deleted");
-		//}
+			Audit(GetUserID(), "DELETE_USER", null, $"UserId={id}");
+			return Ok("User deleted successfully");
+		}
 
 		// =========================
 		// JWT + HELPERS

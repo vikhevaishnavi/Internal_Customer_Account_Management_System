@@ -4,13 +4,96 @@
       <h1>User Management</h1>
       <p class="page-subtitle">Manage bank officers and managers</p>
     </div>
-    <button class="btn-add-user" (click)="addUser()">
+    <button class="btn-add-user" (click)="toggleAddUserForm()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
       </svg>
       Add User
     </button>
+  </div>
+
+  <!-- Add User Form -->
+  <div class="add-user-form" *ngIf="showAddUserForm">
+    <div class="form-container">
+      <h3>Add New User</h3>
+      <form (ngSubmit)="addUser()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Name *</label>
+            <input 
+              type="text" 
+              id="name" 
+              [(ngModel)]="newUser.Name" 
+              name="name" 
+              required
+              placeholder="Enter full name"
+              autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input 
+              type="email" 
+              id="email" 
+              [(ngModel)]="newUser.Email" 
+              name="email" 
+              required
+              placeholder="Enter email address"
+              autocomplete="off">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input 
+              type="password" 
+              id="password" 
+              [(ngModel)]="newUser.Password" 
+              name="password" 
+              required
+              placeholder="Enter password"
+              autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" [(ngModel)]="newUser.Role" name="role">
+              <option value="Officer">Officer</option>
+              <option value="Manager">Manager</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <input 
+              type="text" 
+              id="branch" 
+              [(ngModel)]="newUser.Branch" 
+              name="branch"
+              placeholder="Enter branch name">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" [disabled]="isLoading">
+            {{ isLoading ? 'Creating...' : 'Create User' }}
+          </button>
+          <button type="button" class="btn-cancel" (click)="toggleAddUserForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading State - Only show when no users exist and initially loading -->
+  <div class="loading-state" *ngIf="isLoading && users.length === 0 && !showAddUserForm">
+    <div class="loading-spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+    <button class="btn-retry" (click)="loadUsers()">Retry</button>
   </div>
 
   <div class="search-section">
@@ -21,7 +104,7 @@
       </svg>
       <input 
         type="text" 
-        placeholder="Search by name, email, or username..."
+        placeholder="Search by name, email, role, or branch..."
         [(ngModel)]="searchTerm"
         (input)="onSearchChange()"
         class="search-input"
@@ -29,43 +112,56 @@
     </div>
   </div>
 
-  <div class="users-table-container">
+  <div class="users-table-container" *ngIf="!isLoading || users.length > 0">
     <table class="users-table">
       <thead>
         <tr>
-          <th>USERNAME</th>
           <th>NAME</th>
           <th>EMAIL</th>
           <th>ROLE</th>
           <th>BRANCH</th>
+          <th>STATUS</th>
           <th>ACTIONS</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let user of filteredUsers">
-          <td class="username-cell">{{ user.username }}</td>
-          <td class="name-cell">{{ user.name }}</td>
-          <td class="email-cell">{{ user.email }}</td>
+          <td class="name-cell">{{ user.Name }}</td>
+          <td class="email-cell">{{ user.Email }}</td>
           <td class="role-cell">
-            <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
-              {{ user.role }}
+            <span class="role-badge" [ngClass]="getRoleBadgeClass(user.Role)">
+              {{ user.Role }}
             </span>
           </td>
-          <td class="branch-cell">{{ user.branch }}</td>
+          <td class="branch-cell">{{ user.Branch }}</td>
+          <td class="status-cell">
+            <span class="status-badge" [class.status-active]="user.Status === 'Active'">
+              {{ user.Status || 'Active' }}
+            </span>
+          </td>
           <td class="actions-cell">
-            <button class="btn-action btn-delete" (click)="deleteUser(user)" title="Delete">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-              </svg>
+            <button class="btn-edit" (click)="editUser(user)">Edit</button>
+            <button class="btn-status" (click)="toggleUserStatus(user)">
+              {{ user.Status === 'Active' ? 'Deactivate' : 'Activate' }}
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-
-    <div *ngIf="filteredUsers.length === 0" class="no-results">
-      <p>No users found matching your search.</p>
+    
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredUsers.length === 0 && !isLoading">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 010 7.75"></path>
+      </svg>
+      <h3>No users found</h3>
+      <p>{{ searchTerm ? 'No users match your search criteria.' : 'No users have been created yet.' }}</p>
+      <button class="btn-add-user" (click)="toggleAddUserForm()" *ngIf="!searchTerm">
+        Add Your First User
+      </button>
     </div>
   </div>
 </div>

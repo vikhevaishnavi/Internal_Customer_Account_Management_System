@@ -1,18 +1,19 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // Use relative URL for proxy - will be proxied to https://localhost:7154/api/Users
-
+  // Try both proxy and direct API URLs
   private platformId = inject(PLATFORM_ID);
   private apiUrl = '/api/Users'; 
+  private directApiUrl = 'http://localhost:5000/api/Users';
 
   constructor(private http: HttpClient) {}
 
   login(credentials: any): Observable<any> {
+    // First try with proxy, if it fails, try direct API
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((res: any) => {
         // Your backend returns 'accessToken' and 'refreshToken'
@@ -20,6 +21,21 @@ export class AuthService {
         localStorage.setItem('refreshToken', res.refreshToken);
         
         // We will decode the role from the JWT token
+        const role = this.decodeRoleFromToken(res.accessToken);
+        localStorage.setItem('role', role);
+      }),
+      catchError((error) => {
+        return this.loginDirect(credentials);
+      })
+    );
+  }
+
+  loginDirect(credentials: any): Observable<any> {
+    // Direct API call fallback
+    return this.http.post(`${this.directApiUrl}/login`, credentials).pipe(
+      tap((res: any) => {
+        localStorage.setItem('token', res.accessToken);
+        localStorage.setItem('refreshToken', res.refreshToken);
         const role = this.decodeRoleFromToken(res.accessToken);
         localStorage.setItem('role', role);
       })

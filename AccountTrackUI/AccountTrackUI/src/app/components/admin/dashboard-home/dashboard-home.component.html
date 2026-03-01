@@ -1,12 +1,47 @@
 <div class="dashboard-home">
   <div class="dashboard-header">
-    <h1>Admin Dashboard</h1>
-    <p class="dashboard-subtitle">System overview and analytics</p>
+    <div class="header-content">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p class="dashboard-subtitle">System overview and analytics</p>
+      </div>
+      <div class="header-actions">
+        <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"></path>
+          </svg>
+          {{ isLoading ? 'Refreshing...' : 'Refresh' }}
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="metrics-grid">
-    <div class="metric-card blue" *ngFor="let metric of metrics; let i = index" 
-         [ngClass]="metric.color">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading && metrics.length === 0">
+    <div class="loading-spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="errorMessage">
+    <div class="error-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <p>{{ errorMessage }}</p>
+    <button class="retry-btn" (click)="refreshData()">Retry</button>
+  </div>
+
+  <!-- Metrics Grid -->
+  <div class="metrics-grid" *ngIf="!isLoading || metrics.length > 0">
+    <div class="metric-card" 
+         *ngFor="let metric of metrics; let i = index" 
+         [ngClass]="metric.color"
+         (click)="navigateToSection('users')">
       <div class="metric-icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <!-- Different icons based on metric type -->
@@ -41,6 +76,51 @@
         <div class="metric-value">{{ metric.value }}</div>
         <div class="metric-subtitle">{{ metric.subtitle }}</div>
       </div>
+      <div class="metric-overlay">
+        <span>View Details</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions" *ngIf="!isLoading">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <button class="action-btn" (click)="navigateToSection('users')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 010 7.75"></path>
+        </svg>
+        Manage Users
+      </button>
+      <button class="action-btn" (click)="navigateToSection('accounts')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Manage Accounts
+      </button>
+      <button class="action-btn" (click)="navigateToSection('transactions')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+        </svg>
+        View Transactions
+      </button>
+      <button class="action-btn" (click)="navigateToSection('reports')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        Generate Reports
+      </button>
     </div>
   </div>
 </div>
